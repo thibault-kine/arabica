@@ -2,7 +2,6 @@ TARGET = arabica.exe
 
 CC = gcc
 CFLAGS = -Werror -Wall -Wextra
-LIBS = -lncurses
 MAIN = ./main.c
 SRCS = $(MAIN)
 OBJS = $(SRCS:%.c=%.o)
