@@ -8,7 +8,7 @@
 
 void read_arabica(char* path){
 
-    if (strstr(path, ".cpp"))
+    if (strstr(path, ".abc"))
     {
         FILE* file_arabe = fopen(path, "r");
         if (file_arabe == NULL)
