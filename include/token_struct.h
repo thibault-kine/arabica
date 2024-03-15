@@ -23,6 +23,11 @@ typedef struct t_token {
     char* value;
 } Token;
 
-const char* TOKEN_TABLE[28];
+/**
+ * @param type The type of the token
+*/
+char* type_to_string(TokenType type);
+
+char** get_token_table();
 
 #endif

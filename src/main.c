@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/token_struct.h"
-#include "../include/token_analysis.h"
-#include "../include/read_arabica.h"
+#include "token_struct.h"
+#include "token_analysis.h"
+#include "read_arabica.h"
 
 int main(void) {
     // char* token_str = "STR_CMP";
