@@ -28,6 +28,6 @@ typedef struct t_token {
 */
 char* type_to_string(TokenType type);
 
-char** get_token_table();
+const char** get_token_table();
 
 #endif

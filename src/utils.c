@@ -14,22 +14,27 @@ char** split_file_content(FILE *file) {
 
     while ((c = fgetc(file)) != EOF)
     {
-        if(c == '\n') {
-            word[word_index] = '\0';
-            words[word_count] = strdup(word);
-            word_count++;
-            word_index = 0;
-        } 
+        // if(c == '\n') {
+        //     word[word_index] = '\0';
+        //     words[word_count] = strdup(word);
+        //     word_count++;
+        //     word_index = 0;
+        // } 
         if (c == '"') {
             inside_quotes = !inside_quotes;
         }
-        if ((c == ' ' || c == '\t') && !inside_quotes) {
+
+        if ((c == ' ' || c == '\t' || c == '\n') && !inside_quotes) {
             if (word_index > 0)
             {
                 word[word_index] = '\0';
                 words[word_count] = strdup(word);
                 word_count++;
                 word_index = 0;
+            }
+            if(c == '\n') {
+                words[word_count] = strdup("\n");
+                word_count++;
             }
         } else {
             word[word_index] = c;

@@ -22,14 +22,14 @@ Token* read_arabica(char* path){
         Token* result = malloc(sizeof(Token) * 100);
         char** token_list = split_file_content(file_arabe);
         int i = 0;
-        // Boucle à travers la liste vide de tokens et la
+        // Boucle à travers la liste vide de tokens et la remplit
         while(token_list[i] != NULL) {
             result[i].value = token_list[i];
             result[i].type = get_token_type(result[i].value);
             result[i].index = i + 1;
 
             printf(
-                "Token:\nid = %x\ntype: %s\nvalue: %s\n\n", 
+                "Token:\nid: %x\ntype: %s\nvalue: %s\n\n", 
                 result[i].index, 
                 type_to_string(result[i].type),
                 result[i].value
