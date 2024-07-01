@@ -54,3 +54,5 @@ dkms.conf
 # env files
 .vscode/
 .idea/
+*.pdf
+.log
