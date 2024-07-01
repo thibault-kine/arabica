@@ -15,4 +15,6 @@ char** split_file_content(FILE* file);
 
 char* concat_int(int* integers, int size);
 
+char *itoa(int n);
+
 #endif
