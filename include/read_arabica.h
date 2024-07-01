@@ -9,4 +9,10 @@
 */
 Token* read_arabica(char* path);
 
+/**
+ * Writes the binary file
+ * @param tokens the token list
+*/
+void write_file(char** tokens);
+
 #endif

@@ -19,24 +19,32 @@ Token* read_arabica(char* path){
             exit(0);
         }
 
-        Token* result = malloc(sizeof(Token) * 100);
+        Token* token = malloc(sizeof(Token) * 100);
         char** token_list = split_file_content(file_arabe);
         int i = 0;
         // Boucle à travers la liste vide de tokens et la remplit
         while(token_list[i] != NULL) {
-            result[i].value = token_list[i];
-            result[i].type = get_token_type(result[i].value);
-            result[i].index = i + 1;
+            token[i].value = token_list[i];
+            token[i].type = get_token_type(token[i].value);
+            token[i].index = get_token_index(token[i].value);
 
             printf(
-                "Token:\nid: %x\ntype: %s\nvalue: %s\n\n", 
-                result[i].index, 
-                type_to_string(result[i].type),
-                result[i].value
+                "Token:\nid: %02X\ntype: %s\nvalue: %s\n\n", 
+                token[i].index, 
+                type_to_string(token[i].type),
+                *token[i].value == '\n' ? "\\n" : token[i].value
             );
             i++;
         }
 
+        write_file(token_list);
+
+        // Libère l'espace alloué pour les calculs
+        Token* result = token;
+        for(int j = 0; j < i; j++) {
+            free(&token[j]);
+        }
+        free(token);
         fclose(file_arabe);
 
         return result;
@@ -46,4 +54,25 @@ Token* read_arabica(char* path){
         printf("File is not Arabica !");
         exit(0);
     }
+}
+
+void write_file(char** tokens) {
+    FILE* out = fopen("output.bin", "w+");
+    if(out == NULL) {
+        printf("Error: Output file could not be created");
+        exit(0);
+    }
+
+    Token* token = malloc(sizeof(Token) * 100);
+    int i = 0;
+    while(tokens[i] != NULL) {
+        token[i].value = tokens[i];
+        token[i].type = get_token_type(token[i].value);
+        token[i].index = get_token_index(token[i].value);
+
+        fprintf(out, "%02X ", token[i].index);
+        i++;
+    }
+    
+    fclose(out);
 }
