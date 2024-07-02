@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "token_struct.h"
 #include "token_analysis.h"
@@ -30,9 +31,7 @@ Token *read_arabica(char *path)
       token[i].type = get_token_type(token[i].value);
       token[i].index = get_token_index(token[i].value);
 
-      printf(
-          "id: %02X\n",
-          token[i].index);
+      printf("id: %02X | value: %s\n", token[i].index, token[i].value);
       i++;
     }
 
@@ -46,6 +45,12 @@ Token *read_arabica(char *path)
     }
     free(token);
     fclose(file_arabe);
+
+    for (int i = 0; token_list[i] != NULL; i++)
+    {
+      free(token_list[i]);
+    }
+    free(token_list);
 
     return result;
   }
@@ -69,12 +74,15 @@ void write_file(char **tokens)
   int i = 0;
   while (tokens[i] != NULL)
   {
+    int bit_to_write = 0;
+
     token[i].value = tokens[i];
     token[i].type = get_token_type(token[i].value);
     token[i].index = get_token_index(token[i].value);
 
-    fwrite(itoa(token[i].index), sizeof(char*), 1, out);
-
+    bit_to_write = token[i].index;
+    fwrite(&bit_to_write, sizeof(char), 1, out);
+    free(tokens[i]);
     i++;
   }
 

@@ -8,11 +8,17 @@
 
 TokenType get_token_type(char *token)
 {
+  if (token == NULL)
+  {
+    fprintf(stderr, "Erreur : le pointeur de token est nul.\n");
+    exit(EXIT_FAILURE);
+  }
+
   if (token[0] >= 'A' && token[0] <= 'Z')
   {
     return KWD;
   }
-  else if (token[0] == '\"' || (token[0] >= '0' && token[0] <= '9'))
+  else if (token[0] == '"' || (token[0] >= '0' && token[0] <= '9'))
   {
     return LIT;
   }
@@ -22,14 +28,15 @@ TokenType get_token_type(char *token)
   }
   else
   {
-    printf("Cannot detect token type: %s\n", token);
-    exit(0);
+    fprintf(stderr, "Impossible de détecter le type de token : %s\n", token);
+    exit(EXIT_FAILURE);
   }
 }
 
 long int get_token_index(char *token)
 {
-
+  // printf("%s", token);
+  
   if (get_token_type(token) == BRK)
   {
     return 13;
@@ -45,12 +52,17 @@ long int get_token_index(char *token)
         return i + 1;
       }
 
-      // Todo: Si c'est un litteral ou un \n, on devra renvoyer une liste d'int (un pour chaque char)
       i++;
     }
   }
   if (get_token_type(token) == LIT)
   {
+    // si c'est un entier
+    if (token[0] >= '0' && token[0] <= '9') {
+      return atoi(token);
+    }
+
+    // si c'est une string
   }
 
   return -1;
