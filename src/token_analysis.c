@@ -18,7 +18,7 @@ TokenType get_token_type(char *token)
   {
     return KWD;
   }
-  else if (token[0] == '"' || (token[0] >= '0' && token[0] <= '9'))
+  else if (token[0] == 34 || (token[0] >= '0' && token[0] <= '9'))
   {
     return LIT;
   }
@@ -35,7 +35,7 @@ TokenType get_token_type(char *token)
 
 long int get_token_index(char *token)
 {
-  // printf("%s", token);
+  // printf("truc %s", token);
   
   if (get_token_type(token) == BRK)
   {
@@ -61,8 +61,6 @@ long int get_token_index(char *token)
     if (token[0] >= '0' && token[0] <= '9') {
       return atoi(token);
     }
-
-    // si c'est une string
   }
 
   return -1;

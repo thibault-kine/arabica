@@ -17,6 +17,12 @@ char* concat_int(int* integers, int size);
 
 char *itoa(int n);
 
+int ft_in_seperator(char c, char *charset);
 
+int count_words(char *str, char *charset);
+
+char *alloc_word(char *str, char *charset);
+
+char **split(char *str, char *charset);
 
 #endif

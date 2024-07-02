@@ -144,86 +144,84 @@ char *itoa(int n)
   return str;
 }
 
-// Pour activer les messages de debug, décommentez la ligne suivante:
-// #define DEBUG
-// ou compiler avec la commande suivante:
-// gcc -DDEBUG split.c
-
-int is_space(char c)
+int ft_in_seperator(char c, char *charset)
 {
-	if (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r')
-	// Si c'est un espace, une tabulation,
-	// un saut de page, un retour chariot ou un retour à la ligne
-		return (1);
-	return (0);
+  int i;
+
+  i = 0;
+  while (*(charset + i))
+  {
+    if (*(charset + i) == c)
+      return (1);
+    i++;
+  }
+  return (0);
 }
 
-int count_letters(char *str, int i)
- // i est la position du premier caractere d'un mot dans la chaine
+int count_words(char *str, char *charset)
 {
-	int count;
+  int count;
 
-	count = 0;										// Compteur de caractères
-	while (str[i] != '\0' && is_space(str[i]) == 0) // Tant qu'on est pas à la fin de la chaîne et qu'on est pas sur un espace
-	{
-		count++; // On incrémente le compteur de caractères
-		i++;
-	}
-    
-	return (count);
+  count = 0;
+  while (*str)
+  {
+    while (*str && ft_in_seperator(*str, charset))
+      str++;
+    if (*str && !ft_in_seperator(*str, charset))
+    {
+      count++;
+      while (*str && !ft_in_seperator(*str, charset))
+        str++;
+    }
+  }
+  return (count);
 }
 
-int count_words(char *str)
+char *alloc_word(char *str, char *charset)
 {
-	int i;
-	int count;
+  char *word;
+  int i;
 
-	i = 0;				   // Compteur de caractères
-	count = 0;			   // Compteur de mots
-	while (str[i] != '\0') // Tant qu'on est pas à la fin de la chaîne
-	{
-		if (is_space(str[i]) == 0) // Si on est pas sur un espace
-		{
-			count++;										// On incrémente le compteur de mots
-			while (str[i] != '\0' && is_space(str[i]) == 0) // Tant qu'on est pas à la fin de la chaîne
-															// et qu'on est pas sur un espace
-				i++;										// On incrémente le compteur de caractères
-		}
-		else
-			i++; // On passe au caractère suivant
-	}
-
-	return (count);
+  i = 0;
+  while (*(str + i) && !ft_in_seperator(*(str + i), charset))
+    i++;
+  if (!(word = (char *)malloc(sizeof(char) * (i + 1))))
+    return (NULL);
+  i = 0;
+  while (*(str + i) && !ft_in_seperator(*(str + i), charset))
+  {
+    *(word + i) = *(str + i);
+    i++;
+  }
+  *(word + i) = '\0';
+  return (word);
 }
 
-char **split(char *str) {
+char **split(char *str, char *charset)
+{
+  char **words;
+  int count;
+  int size;
+  int j;
 
-	char **tab;
-	int i;
-	int j;
-	int k;
-
-	i = 0;															// i parcourt la chaîne de caractères
-	j = 0;															// j parcourt le tableau de pointeurs
-	k = 0;															// k parcourt la chaîne de caractères de destination
-	tab = (char **)malloc(sizeof(char *) * (count_words(str) + 1)); // Allocation du tableau de pointeurs, +1 pour le NULL
-
-	while (str[i] != '\0') // Tant qu'on est pas à la fin de la chaîne
-	{
-		if (is_space(str[i]) == 0) // Si on est pas sur un espace
-		{
-			tab[j] = (char *)malloc(sizeof(char) * (count_letters(str, i) + 1)); // Allocation de la chaîne de caractères, +1 pour le '\0'
-
-			while (str[i] != '\0' && is_space(str[i]) == 0) // Tant qu'on est pas à la fin de la chaîne et qu'on est pas sur un espace
-				tab[j][k++] = str[i++];						// On copie le caractère et on incrémente i et k
-			tab[j][k] = '\0';								// On termine la chaîne de caractères
-
-			j++;   // On incrémente j pour passer à la chaîne suivante
-			k = 0; // On remet k à 0 pour la chaîne suivante
-		}
-		else
-			i++; // On incrémente i pour passer au caractère suivant
-	}
-	tab[j] = NULL; // On termine le tableau de pointeurs
-	return (tab);  // On retourne le tableau de pointeurs
+  size = count_words(str, charset);
+  if (!(words = (char **)malloc(sizeof(char *) * (size + 1))))
+    return (NULL);
+  count = 0;
+  j = 0;
+  while (*(str + j))
+  {
+    while (*(str + j) && ft_in_seperator(*(str + j), charset))
+      j++;
+    if (*(str + j) && !ft_in_seperator(*(str + j), charset))
+    {
+      if (!(words[count] = alloc_word((str + j), charset)))
+        return (NULL);
+      count++;
+      while (*(str + j) && !ft_in_seperator(*(str + j), charset))
+        str++;
+    }
+  }
+  words[count] = NULL;
+  return (words);
 }

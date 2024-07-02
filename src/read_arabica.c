@@ -25,8 +25,10 @@ Token *read_arabica(char *path)
     char **token_list = split_file_content(file_arabe);
     int i = 0;
     // Boucle à travers la liste vide de tokens et la remplit
+    // printf("%d", token_list[1][0]);
     while (token_list[i] != NULL)
     {
+      // printf("%s\n", token_list[i]);
       token[i].value = token_list[i];
       token[i].type = get_token_type(token[i].value);
       token[i].index = get_token_index(token[i].value);
@@ -78,10 +80,35 @@ void write_file(char **tokens)
 
     token[i].value = tokens[i];
     token[i].type = get_token_type(token[i].value);
-    token[i].index = get_token_index(token[i].value);
 
-    bit_to_write = token[i].index;
-    fwrite(&bit_to_write, sizeof(char), 1, out);
+    if (token[i].type == LIT)
+    {
+      if (token[i].value[0] == 34)
+      {
+        int j = 1;
+        while (token[i].value[j] != 34)
+        {
+          bit_to_write = token[i].value[j];
+          fwrite(&bit_to_write, sizeof(char), 1, out);
+          j++;
+        }
+      }
+      else
+      {
+        token[i].index = get_token_index(token[i].value);
+        bit_to_write = token[i].index;
+
+        fwrite(&bit_to_write, sizeof(char), 1, out);
+      }
+    }
+    else
+    {
+      token[i].index = get_token_index(token[i].value);
+      bit_to_write = token[i].index;
+
+      fwrite(&bit_to_write, sizeof(char), 1, out);
+    }
+
     free(tokens[i]);
     i++;
   }
