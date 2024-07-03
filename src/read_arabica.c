@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <endian.h>
 
 #include "token_struct.h"
 #include "token_analysis.h"
@@ -63,6 +65,15 @@ Token *read_arabica(char *path)
   }
 }
 
+uint32_t reverse_endianness(uint32_t value)
+{
+  uint32_t byte0 = (value & 0x000000FF) << 24;
+  uint32_t byte1 = (value & 0x0000FF00) << 8;
+  uint32_t byte2 = (value & 0x00FF0000) >> 8;
+  uint32_t byte3 = (value & 0xFF000000) >> 24;
+  return (byte0 | byte1 | byte2 | byte3);
+}
+
 void write_file(char **tokens)
 {
   FILE *out = fopen("output", "wb");
@@ -96,9 +107,9 @@ void write_file(char **tokens)
       else
       {
         token[i].index = get_token_index(token[i].value);
-        bit_to_write = token[i].index;
+        bit_to_write = reverse_endianness(token[i].index);
 
-        fwrite(&bit_to_write, sizeof(char), 1, out);
+        fwrite(&bit_to_write, sizeof(int), 1, out);
       }
     }
     else
@@ -113,5 +124,40 @@ void write_file(char **tokens)
     i++;
   }
 
+  int size = get_file_size(out);
+  write_header(out, size);
+  
   fclose(out);
+}
+
+void write_header(FILE *f, int size)
+{
+  fseek(f, 0, SEEK_SET);
+
+  char *code_header = "CODE";
+  for (int i = 0; code_header[i] != '\0'; i++)
+  {
+    if (fwrite(&code_header[i], sizeof(char), 1, f) != 1)
+    {
+      perror("Error while writing header");
+      exit(1);
+    }
+  }
+
+  int _size = reverse_endianness(size);
+
+  if (fwrite(&_size, sizeof(int), 1, f) != 1)
+  {
+    perror("Error while writing size in header");
+    exit(1);
+  }
+}
+
+int get_file_size(FILE *f)
+{
+  fseek(f, 0, SEEK_END);
+  int size = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  return size;
 }
